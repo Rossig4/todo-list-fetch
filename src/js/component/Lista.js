@@ -80,13 +80,13 @@ const Lista = () => {
 							type="text"
 							className="form-control mb-2"
 							id="inlineFormInput"
-							placeholder="Jane Doe"
+							placeholder="Describa la tarea"
 							onChange={event => setTarea(event.target.value)}
 						/>
 					</div>
 					<div className="col-auto">
-						<button type="submit" className="btn btn-primary mb-2">
-							Submit
+						<button type="submit" className="btn btn-danger mb-2">
+							<i class="fas fa-angry fa-2x"></i>
 						</button>
 					</div>
 				</div>
@@ -94,9 +94,15 @@ const Lista = () => {
 			<div className="lista">
 				{listaTareas.map((element, index) => {
 					return (
-						<li key={index}>
+						<li
+							className="list-group-item d-flex justify-content-between align-items-center"
+							key={index}>
 							{element.label}
-							<button onClick={() => eliminar(index)}>x</button>
+							<button
+								className="btn btn-outline-danger"
+								onClick={() => eliminar(index)}>
+								<i class="fas fa-check"></i>
+							</button>
 						</li>
 					);
 				})}
