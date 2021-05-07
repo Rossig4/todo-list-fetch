@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const Lista = () => {
 	const [tarea, setTarea] = useState();
@@ -6,9 +6,57 @@ const Lista = () => {
 
 	const añadirTarea = event => {
 		event.preventDefault();
-		setListaTareas([...listaTareas, tarea]);
+		setListaTareas([...listaTareas, { label: tarea, done: false }]);
 		setTarea("");
+		updateListaTarea([...listaTareas, { label: tarea, done: false }]);
 	};
+
+	const updateListaTarea = toDos => {
+		fetch("https://assets.breatheco.de/apis/fake/todos/user/rossig4", {
+			method: "PUT",
+			body: JSON.stringify(toDos),
+			headers: {
+				"Content-Type": "application/json"
+			}
+		})
+			.then(resp => {
+				console.log(resp.ok); // Será true (verdad) si la respuesta es exitosa.
+				console.log(resp.status); // el código de estado = 200 o código = 400 etc.
+				console.log(resp.text()); // Intentará devolver el resultado exacto como cadena (string)
+				return resp.json(); // (regresa una promesa) will try to parse the result as json as return a promise that you can .then for results
+			})
+			.then(data => {
+				//Aquí es donde debe comenzar tu código después de que finalice la búsqueda
+				console.log(data); //esto imprimirá en la consola el objeto exacto recibido del servidor
+			})
+			.catch(error => {
+				//manejo de errores
+				console.log(error);
+			});
+	};
+
+	const getData = () => {
+		fetch("https://assets.breatheco.de/apis/fake/todos/user/rossig4")
+			.then(resp => {
+				// console.log(resp.ok); // Será true (verdad) si la respuesta es exitosa.
+				// console.log(resp.status); // el código de estado = 200 o código = 400 etc.
+				// console.log(resp.text()); // Intentará devolver el resultado exacto como cadena (string)
+				return resp.json(); // (regresa una promesa) will try to parse the result as json as return a promise that you can .then for results
+			})
+			.then(data => {
+				//Aquí es donde debe comenzar tu código después de que finalice la búsqueda
+				console.log(data); //esto imprimirá en la consola el objeto exacto recibido del servidor
+				setListaTareas(data);
+			})
+			.catch(error => {
+				//manejo de errores
+				console.log(error);
+			});
+	};
+
+	useEffect(() => {
+		getData();
+	}, []);
 
 	const eliminar = i => {
 		let nuevoarraytareas = listaTareas.filter((element, index) => {
@@ -17,6 +65,7 @@ const Lista = () => {
 			}
 		});
 		setListaTareas(nuevoarraytareas);
+		updateListaTarea(nuevoarraytareas);
 	};
 
 	return (
@@ -46,7 +95,7 @@ const Lista = () => {
 				{listaTareas.map((element, index) => {
 					return (
 						<li key={index}>
-							{element}
+							{element.label}
 							<button onClick={() => eliminar(index)}>x</button>
 						</li>
 					);
